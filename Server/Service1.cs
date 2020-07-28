@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
@@ -9,13 +10,11 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    public partial class TestService : ServiceBase
+    public partial class Service1 : ServiceBase
     {
-        public TestService()
+        public Service1()
         {
             InitializeComponent();
-            eventLog1.Source = "ServiceSource";
-            eventLog1.Log = "ServiceLog";
         }
 
         protected override void OnStart(string[] args)

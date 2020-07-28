@@ -17,7 +17,7 @@ namespace Server
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new TestService()
+                new Service1()
             };
             ServiceBase.Run(ServicesToRun);
         }

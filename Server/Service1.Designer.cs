@@ -1,6 +1,6 @@
 ﻿namespace Server
 {
-    partial class TestService
+    partial class Service1
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,18 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.eventLog1 = new System.Diagnostics.EventLog();
-            ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
-            // 
-            // TestService
-            // 
-            this.ServiceName = "TestService";
-            ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).EndInit();
-
+            components = new System.ComponentModel.Container();
+            this.ServiceName = "Service1";
         }
 
         #endregion
-
-        private System.Diagnostics.EventLog eventLog1;
     }
 }
