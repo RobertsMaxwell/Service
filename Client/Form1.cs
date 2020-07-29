@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -45,6 +46,11 @@ namespace Client
             Console.WriteLine("Establishing Connection to {0}:1738", targetIP.Text);
             s.Connect(targetIP.Text, 1738);
             Console.WriteLine("Connection established");
+            using (NetworkStream ms = new NetworkStream(s)) 
+            {
+                var sw = new StreamWriter(ms);
+                sw.Write("Test String");
+            }
         }
     }
 }
