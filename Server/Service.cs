@@ -16,6 +16,7 @@ namespace Server
     public partial class Service : ServiceBase
     {
         private int eventID = 0;
+        private Listener listener;
 
         public Service()
         {
@@ -33,22 +34,13 @@ namespace Server
         protected override void OnStart(string[] args)
         {
             SendMessage("Started.");
-            Listener listener = new Listener(1738);
+            listener = new Listener(1738);
             Thread thread = new Thread(new ThreadStart(listener.BeginStart)) { IsBackground = true };
             thread.Start();
-
             SendMessage("Started Listening...");
-            while (listener.client == null)
-            {
-                Thread.Sleep(100);
-            }
 
-            SendMessage("Connected");
-            Connection connection = new Connection(listener.client);
-            connection.ReadInfo();
-
-            /*Timer timer = new Timer(60000);
-            timer.Elapsed += this.OnTimer;*/
+            System.Timers.Timer timer = new System.Timers.Timer(100);
+            timer.Elapsed += OnTimer;
         }
 
         protected override void OnStop()
@@ -58,7 +50,14 @@ namespace Server
 
         protected void OnTimer(object sender, ElapsedEventArgs args)
         {
-            SendMessage("Timer Elapsed");
+            if (listener.client != null)
+            {
+                Connection connection = new Connection(listener.client);
+                connection.ReadInfo();
+
+                SendMessage("Connected");
+            }
+            SendMessage("Listening...");
         }
 
         public void SendMessage(string mes)
