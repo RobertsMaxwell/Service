@@ -41,6 +41,7 @@ namespace Server
 
             System.Timers.Timer timer = new System.Timers.Timer(100);
             timer.Elapsed += OnTimer;
+            timer.Start();
         }
 
         protected override void OnStop()
