@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    static class Program
+    static class ServerMain
     {
+        public static Service service;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -17,7 +19,7 @@ namespace Server
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new TestService()
+                service = new Service()
             };
             ServiceBase.Run(ServicesToRun);
         }

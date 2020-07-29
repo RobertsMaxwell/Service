@@ -39,8 +39,8 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.Description = "A test service";
-            this.serviceInstaller1.DisplayName = "TestService Display Name";
+            this.serviceInstaller1.Description = "Service Test";
+            this.serviceInstaller1.DisplayName = "TestService";
             this.serviceInstaller1.ServiceName = "TestService";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
