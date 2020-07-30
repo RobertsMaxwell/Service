@@ -57,10 +57,11 @@ namespace Client
 
             long newIP = Convert.ToInt64(ipAddress, 16);
             IPAddress ServiceIP = new IPAddress(newIP);
+            Console.WriteLine(ServiceIP.ToString());
 
-            client.ConnectAsync(ServiceIP, 1738);
+            client.Connect(ServiceIP, 1738);
             Console.WriteLine("Connection established");
-            NetworkStream networkStream;
+            //NetworkStream networkStream;
             //var sw = new StreamWriter(ms);
             //sw.Write("Test String");
         }

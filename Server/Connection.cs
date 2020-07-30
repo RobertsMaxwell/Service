@@ -33,10 +33,8 @@ namespace Server
                     {
                         byte[] info = new byte[1];
                         str.Read(info, 0, info.Length);
-                        streamData += info;
+                        streamData += (Encoding.ASCII.GetString(info));
                     }
-
-                    ServerMain.service.SendMessage(streamData);
 
                     str.Flush();
                 }

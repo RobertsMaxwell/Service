@@ -31,6 +31,7 @@ namespace Server
                 ServerMain.service.SendMessage("Listening...");
                 client = listener.AcceptTcpClient();
                 ServerMain.service.SendMessage("Connected!");
+                return;
             }
         }
 
