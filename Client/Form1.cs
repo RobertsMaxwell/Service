@@ -48,10 +48,17 @@ namespace Client
             Console.WriteLine("Establishing Connection to {0}:1738", targetIP.Text);
 
             IPAddress ServiceIP = IPAddress.Parse(targetIP.Text);
+            try
+            {
+                client.Connect(ServiceIP, 1738);
 
-            client.ConnectAsync(ServiceIP, 1738);
-            Console.WriteLine("Connection established");
-            NetworkStream networkStream;
+                Console.WriteLine("Connection established");
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            //NetworkStream networkStream;
             //var sw = new StreamWriter(ms);
             //sw.Write("Test String");
         }
