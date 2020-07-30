@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net;
+using System.Linq;
 
 namespace Client
 {
@@ -41,16 +43,26 @@ namespace Client
 
         private void ConnectToServer()
         {
-            Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            TcpClient client = new TcpClient();
 
             Console.WriteLine("Establishing Connection to {0}:1738", targetIP.Text);
-            s.Connect(targetIP.Text, 1738);
-            Console.WriteLine("Connection established");
-            using (NetworkStream ms = new NetworkStream(s)) 
+
+            string[] iP = targetIP.Text.Split('.');
+            string ipAddress = "";
+
+            for(int x = iP.Length-1; x >= 0; x--)
             {
-                var sw = new StreamWriter(ms);
-                sw.Write("Test String");
+                ipAddress += int.Parse(iP[x]).ToString("X");
             }
+
+            long newIP = Convert.ToInt64(ipAddress, 16);
+            IPAddress ServiceIP = new IPAddress(newIP);
+
+            client.ConnectAsync(ServiceIP, 1738);
+            Console.WriteLine("Connection established");
+            NetworkStream networkStream;
+            //var sw = new StreamWriter(ms);
+            //sw.Write("Test String");
         }
     }
 }
