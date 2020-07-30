@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="Connection.cs" />
     <Compile Include="Listener.cs" />
+    <Compile Include="Manipulate.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
