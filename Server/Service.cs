@@ -35,12 +35,11 @@ namespace Server
         {
             SendMessage("Started.");
             listener = new Listener(1738);
-            Thread thread = new Thread(new ThreadStart(listener.BeginStart)) { IsBackground = true };
+            Thread thread = new Thread(new ThreadStart(listener.BeginListening)) { IsBackground = true };
             thread.Start();
-            SendMessage("Started Listening...");
 
             System.Timers.Timer timer = new System.Timers.Timer(100);
-            timer.Elapsed += OnTimer;
+            timer.Elapsed += new ElapsedEventHandler(OnTimer);
             timer.Start();
         }
 
@@ -55,10 +54,7 @@ namespace Server
             {
                 Connection connection = new Connection(listener.client);
                 connection.ReadInfo();
-
-                SendMessage("Connected");
             }
-            SendMessage("Listening...");
         }
 
         public void SendMessage(string mes)

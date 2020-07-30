@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Server
 {
@@ -19,21 +20,17 @@ namespace Server
         {
             this.port = port;
             listener = new TcpListener(port);
-            listener.Start(1);
         }
 
-        public void BeginStart()
+        public void BeginListening()
         {
-            searching = true;
-            while (searching)
+            listener.Start();
+            while (true)
             {
-                TcpClient cl = listener.AcceptTcpClient();
-
-                if (cl.Connected)
-                {
-                    client = cl;
-                    return;
-                }
+                Thread.Sleep(10);
+                ServerMain.service.SendMessage("Listening...");
+                client = listener.AcceptTcpClient();
+                ServerMain.service.SendMessage("Connected!");
             }
         }
 
