@@ -37,6 +37,8 @@ namespace Server
                     }
 
                     str.Flush();
+
+                    str.Write(new byte[] {Encoding.ASCII.GetBytes(Ch) })
                 }
             }
         }

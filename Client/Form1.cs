@@ -17,6 +17,8 @@ namespace Client
 {
     public partial class Form1 : Form
     {
+        string message = "I kid you not, he turned himself into a pickle.";
+
         public Form1()
         {
             InitializeComponent();
@@ -38,6 +40,7 @@ namespace Client
             catch(Exception)
             {
                 Console.WriteLine("Connection Failed");
+                return;
             }
         }
 
@@ -47,23 +50,27 @@ namespace Client
 
             Console.WriteLine("Establishing Connection to {0}:1738", targetIP.Text);
 
-            string[] iP = targetIP.Text.Split('.');
-            string ipAddress = "";
-
-            for(int x = iP.Length-1; x >= 0; x--)
+            IPAddress ServiceIP = IPAddress.Parse(targetIP.Text);
+            try
             {
-                ipAddress += int.Parse(iP[x]).ToString("X");
+                
+                client.Connect(ServiceIP, 1738);
+
+                Console.WriteLine("Connection established");
+
+                if(client.Connected)
+                {
+                    NetworkStream ns = client.GetStream();
+
+                    byte[] messageArr = Encoding.ASCII.GetBytes(message);
+                    ns.Write(messageArr, 0, messageArr.Length);
+                }
             }
-
-            long newIP = Convert.ToInt64(ipAddress, 16);
-            IPAddress ServiceIP = new IPAddress(newIP);
-            Console.WriteLine(ServiceIP.ToString());
-
-            client.Connect(ServiceIP, 1738);
-            Console.WriteLine("Connection established");
-            //NetworkStream networkStream;
-            //var sw = new StreamWriter(ms);
-            //sw.Write("Test String");
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return;
+            }
         }
     }
 }
