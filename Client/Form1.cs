@@ -17,6 +17,8 @@ namespace Client
 {
     public partial class Form1 : Form
     {
+        string message = "I kid you not, he turned himself into a pickle.";
+
         public Form1()
         {
             InitializeComponent();
@@ -38,6 +40,7 @@ namespace Client
             catch(Exception)
             {
                 Console.WriteLine("Connection Failed");
+                return;
             }
         }
 
@@ -50,17 +53,24 @@ namespace Client
             IPAddress ServiceIP = IPAddress.Parse(targetIP.Text);
             try
             {
+                
                 client.Connect(ServiceIP, 1738);
 
                 Console.WriteLine("Connection established");
+
+                if(client.Connected)
+                {
+                    NetworkStream ns = client.GetStream();
+
+                    byte[] messageArr = Encoding.ASCII.GetBytes(message);
+                    ns.Write(messageArr, 0, messageArr.Length);
+                }
             }
             catch(Exception e)
             {
                 Console.WriteLine(e.ToString());
+                return;
             }
-            //NetworkStream networkStream;
-            //var sw = new StreamWriter(ms);
-            //sw.Write("Test String");
         }
     }
 }
