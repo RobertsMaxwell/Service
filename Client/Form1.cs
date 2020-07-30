@@ -47,16 +47,7 @@ namespace Client
 
             Console.WriteLine("Establishing Connection to {0}:1738", targetIP.Text);
 
-            string[] iP = targetIP.Text.Split('.');
-            string ipAddress = "";
-
-            for(int x = iP.Length-1; x >= 0; x--)
-            {
-                ipAddress += int.Parse(iP[x]).ToString("X");
-            }
-
-            long newIP = Convert.ToInt64(ipAddress, 16);
-            IPAddress ServiceIP = new IPAddress(newIP);
+            IPAddress ServiceIP = IPAddress.Parse(targetIP.Text);
 
             client.ConnectAsync(ServiceIP, 1738);
             Console.WriteLine("Connection established");
