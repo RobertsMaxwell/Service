@@ -13,8 +13,9 @@ namespace Server
         public int port;
         public TcpClient client;
         public TcpListener listener;
+        private Thread listeningThead;
 
-        private bool searching = true;
+        public bool searching = true;
 
         public Listener(int port)
         {
@@ -24,8 +25,10 @@ namespace Server
 
         public void BeginListening()
         {
+            listeningThead = Thread.CurrentThread;
             listener.Start();
-            while (true)
+            searching = true;
+            while (searching)
             {
                 Thread.Sleep(10);
                 ServerMain.service.SendMessage("Listening...");
@@ -35,10 +38,11 @@ namespace Server
             }
         }
 
-        public void EndStart()
+        public void Stop()
         {
             searching = false;
             client = null;
+            listeningThead.Abort();
         }
     }
 }

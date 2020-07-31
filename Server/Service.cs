@@ -17,6 +17,7 @@ namespace Server
     {
         private int eventID = 0;
         private Listener listener;
+        private Thread timerThread;
 
         public Service()
         {
@@ -33,27 +34,42 @@ namespace Server
 
         protected override void OnStart(string[] args)
         {
-            SendMessage("Started.");
             listener = new Listener(1738);
-            Thread thread = new Thread(new ThreadStart(listener.BeginListening)) { IsBackground = true };
-            thread.Start();
 
-            System.Timers.Timer timer = new System.Timers.Timer(100);
+            System.Timers.Timer timer = new System.Timers.Timer(10);
             timer.Elapsed += new ElapsedEventHandler(OnTimer);
-            timer.Start();
+
+            timerThread = new Thread(new ThreadStart(timer.Start)) { IsBackground = true };
+            timerThread.Start();
         }
 
         protected override void OnStop()
         {
-            SendMessage("Stopped.");
+            timerThread.Abort();
+            listener.Stop();
         }
 
         protected void OnTimer(object sender, ElapsedEventArgs args)
         {
-            if (listener.client != null)
+            if (listener.client == null)
+            {
+                Thread thread = new Thread(new ThreadStart(listener.BeginListening)) { IsBackground = true };
+                thread.Start();
+            }
+            else if (listener.client != null)
             {
                 Connection connection = new Connection(listener.client);
-                connection.ReadInfo();
+                listener.client = null;
+
+                while (connection.client.Connected)
+                {
+                    string info = connection.ReadInfo();
+                    SendMessage(info);
+                    //Manipulate.DoAction(info.Trim());
+                    /*byte[] returnBytes = Encoding.ASCII.GetBytes(Manipulate.DoAction(info).ToString());
+                    connection.client.GetStream().Write(returnBytes, 0, returnBytes.Length);*/
+                    Thread.Sleep(10);
+                }
             }
         }
 
