@@ -6,41 +6,62 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Server
 {
     class Connection
     {
-        TcpClient client;
+        public TcpClient client;
+        public Image lastImage;
         bool reading;
+        Image img;
 
         public Connection(TcpClient cl)
         {
             client = cl;
-            Thread readThread = new Thread(new ThreadStart(ReadInfo)) { IsBackground = true };
-            readThread.Start();
         }
 
-        public void ReadInfo()
+        public string ReadInfo()
         {
-            reading = true;
-            while (reading)
+            using (NetworkStream str = client.GetStream())
             {
-                using (NetworkStream str = client.GetStream())
+                BinaryFormatter bf = new BinaryFormatter();
+                byte[] strInfo = (byte[])bf.Deserialize(str);
+
+                for (int i = 0; i < strInfo.Length; i++)
                 {
-                    string streamData = "";
-                    while (str.DataAvailable)
+                    if ((char)Convert.ToInt32(strInfo[i]) == '\n')
                     {
-                        byte[] info = new byte[1];
-                        str.Read(info, 0, info.Length);
-                        streamData += (Encoding.ASCII.GetString(info));
+                        byte[] action = new byte[i];
+                        Array.Copy(strInfo, action, action.Length);
+
+                        byte[] image = new byte[strInfo.Length - (action.Length + 1)];
+                        Array.Copy(strInfo, action.Length + 1, image, 0, image.Length);
+
+                        using (MemoryStream ms = new MemoryStream(image))
+                        {
+                            Image img = Image.FromStream(ms);
+                        }
+
+                        try
+                        {
+                            Manipulate.ChangeBackground(img);
+                        }
+                        catch (Exception e)
+                        {
+                            ServerMain.service.SendMessage("ERROR: " + e.Message);
+                        }
+                        
+                        return Encoding.ASCII.GetString(action);
                     }
-
-                    str.Flush();
-
-                    //str.Write(new byte[] {Encoding.ASCII.GetBytes(Ch) })
                 }
+
+                str.Flush();
             }
+            return "";
         }
     }
 }

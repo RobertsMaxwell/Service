@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace Server
 {
@@ -31,7 +32,7 @@ namespace Server
         {
             string tempPath = Path.Combine(Path.GetTempPath(), "new_background.png");
 
-            image.Save(tempPath, System.Drawing.Imaging.ImageFormat.Png);
+            image.Save(tempPath, System.Drawing.Imaging.ImageFormat.Jpeg);
 
             SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, tempPath, SPIF_UPDATEINIFILE);
         }
