@@ -51,6 +51,7 @@ namespace Server
 
         protected void OnTimer(object sender, ElapsedEventArgs args)
         {
+            SendMessage("TIMER");
             if (listener.client == null)
             {
                 Thread thread = new Thread(new ThreadStart(listener.BeginListening)) { IsBackground = true };
@@ -64,7 +65,10 @@ namespace Server
                 while (connection.client.Connected)
                 {
                     string info = connection.ReadInfo();
-                    SendMessage(info);
+                    if (!string.IsNullOrEmpty(info))
+                    {
+                        SendMessage(info);
+                    }
                     //Manipulate.DoAction(info.Trim());
                     /*byte[] returnBytes = Encoding.ASCII.GetBytes(Manipulate.DoAction(info).ToString());
                     connection.client.GetStream().Write(returnBytes, 0, returnBytes.Length);*/
