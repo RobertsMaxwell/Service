@@ -18,6 +18,7 @@ namespace Server
         private int eventID = 0;
         private Listener listener;
         private Thread timerThread;
+        System.Timers.Timer timer;
 
         public Service()
         {
@@ -36,7 +37,7 @@ namespace Server
         {
             listener = new Listener(1738);
 
-            System.Timers.Timer timer = new System.Timers.Timer(10);
+            timer = new System.Timers.Timer(10);
             timer.Elapsed += new ElapsedEventHandler(OnTimer);
 
             timerThread = new Thread(new ThreadStart(timer.Start)) { IsBackground = true };
@@ -45,17 +46,15 @@ namespace Server
 
         protected override void OnStop()
         {
-            timerThread.Abort();
+            timer.Stop();
             listener.Stop();
         }
 
         protected void OnTimer(object sender, ElapsedEventArgs args)
         {
-            SendMessage("TIMER");
             if (listener.client == null)
             {
-                Thread thread = new Thread(new ThreadStart(listener.BeginListening)) { IsBackground = true };
-                thread.Start();
+                listener.BeginListening();
             }
             else if (listener.client != null)
             {
@@ -64,15 +63,17 @@ namespace Server
 
                 while (connection.client.Connected)
                 {
+                    SendMessage("READING");
                     string info = connection.ReadInfo();
+                    
                     if (!string.IsNullOrEmpty(info))
                     {
-                        SendMessage(info);
+                        SendMessage("Info:" + info);
                     }
                     //Manipulate.DoAction(info.Trim());
                     /*byte[] returnBytes = Encoding.ASCII.GetBytes(Manipulate.DoAction(info).ToString());
                     connection.client.GetStream().Write(returnBytes, 0, returnBytes.Length);*/
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
             }
         }

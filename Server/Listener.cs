@@ -13,7 +13,6 @@ namespace Server
         public int port;
         public TcpClient client;
         public TcpListener listener;
-        private Thread listeningThead;
 
         public bool searching = true;
 
@@ -25,13 +24,11 @@ namespace Server
 
         public void BeginListening()
         {
-            listeningThead = Thread.CurrentThread;
             listener.Start();
             searching = true;
             while (searching)
             {
                 Thread.Sleep(10);
-                ServerMain.service.SendMessage("Listening...");
                 client = listener.AcceptTcpClient();
                 ServerMain.service.SendMessage("Connected!");
                 return;
@@ -42,7 +39,6 @@ namespace Server
         {
             searching = false;
             client = null;
-            listeningThead.Abort();
         }
     }
 }

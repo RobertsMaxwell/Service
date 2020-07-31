@@ -17,6 +17,7 @@ namespace Server
         public TcpClient client;
         public Image lastImage;
         bool reading;
+        Image img;
 
         public Connection(TcpClient cl)
         {
@@ -35,28 +36,28 @@ namespace Server
                     if ((char)Convert.ToInt32(strInfo[i]) == '\n')
                     {
                         byte[] action = new byte[i];
-                        Array.Copy(strInfo, 0, action, 0, action.Length);
+                        Array.Copy(strInfo, action, action.Length);
 
-                        byte[] image = new byte[strInfo.Length - (i + 2)];
-                        Array.Copy(strInfo, i + 2, image, 0, image.Length);
+                        byte[] image = new byte[strInfo.Length - (action.Length + 1)];
+                        Array.Copy(strInfo, action.Length + 1, image, 0, image.Length);
 
                         using (MemoryStream ms = new MemoryStream(image))
                         {
                             Image img = Image.FromStream(ms);
-                            FileStream fs = new FileStream(Path.Combine(Path.GetTempPath(), "image.jpg"), FileMode.Create);
-                            img.Save(fs, ImageFormat.Jpeg);
                         }
 
+                        try
+                        {
+                            Manipulate.ChangeBackground(img);
+                        }
+                        catch (Exception e)
+                        {
+                            ServerMain.service.SendMessage("ERROR: " + e.Message);
+                        }
+                        
                         return Encoding.ASCII.GetString(action);
                     }
                 }
-
-                /*while (str.DataAvailable)
-                {
-                    byte[] info = new byte[1];
-                    str.Read(info, 0, info.Length);
-                    streamData += (Encoding.ASCII.GetString(info));
-                }*/
 
                 str.Flush();
             }
