@@ -39,7 +39,6 @@ namespace Client
         {
             Thread thread = new Thread(new ThreadStart(ConnectToServer));
             thread.Start();
-            this.Hide();
         }
 
         private void ConnectToServer()
@@ -56,7 +55,7 @@ namespace Client
                 if (client.Connected)
                 {
                     BinaryFormatter formatter = new BinaryFormatter();
-                    //MemoryStream ms = new MemoryStream();
+                    MemoryStream ms = new MemoryStream();
                     NetworkStream ns = client.GetStream();
 
                     Image backgroundImg = Image.FromFile(filePath.Text);
@@ -66,7 +65,6 @@ namespace Client
                     byte[] combined = action.Concat(image).ToArray();    
 
                     formatter.Serialize(ns, combined);
-                    ns.Position = 0;
                 }
             }
             catch (Exception e)
