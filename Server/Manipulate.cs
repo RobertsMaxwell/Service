@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Server
 {
@@ -16,8 +17,8 @@ namespace Server
         [DllImport("user.dll")]
         static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
 
-        const int SPI_SETDESKWALLPAPER = 0x0014;
-        const int SPIF_UPDATEINIFILE = 0x01;
+        static int SPI_SETDESKWALLPAPER = 0x0014;
+        static int SPIF_UPDATEINIFILE = 0x01;
 
         public static int DoAction(string action)
         {
@@ -30,9 +31,9 @@ namespace Server
 
         public static void ChangeBackground(Image image)
         {
-            string tempPath = Path.Combine(Path.GetTempPath(), "new_background.png");
+            string tempPath = Path.Combine(Path.GetTempPath(), "new_background.jpeg");
 
-            image.Save(tempPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+            image.Save(tempPath, ImageFormat.Jpeg);
 
             SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, tempPath, SPIF_UPDATEINIFILE);
         }
