@@ -63,7 +63,7 @@ namespace Server
             IntPtr notepad = FindWindow("notepad", null);
             SetForegroundWindow(notepad);
             Thread.Sleep(100);
-            SendKeys.SendWait("Test");
+            SendKeys.SendWait(message);
         }
     }
 }
