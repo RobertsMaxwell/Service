@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Configuration.Install;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Management;
 
 namespace Server
 {
@@ -14,6 +15,21 @@ namespace Server
         public ProjectInstaller()
         {
             InitializeComponent();
+        }
+
+        private void serviceInstaller1_Committed(object sender, InstallEventArgs e)
+        {
+            /*ConnectionOptions co = new ConnectionOptions();
+            co.Impersonation = ImpersonationLevel.Impersonate;
+
+            ManagementScope ms = new ManagementScope(@"root\cimv2", co);
+            ms.Connect();
+
+            ManagementObject wmi = new ManagementObject("Win32_Service.Name='" + serviceInstaller1.ServiceName + "'");
+
+            ManagementBaseObject wmiParams = wmi.GetMethodParameters("Change");
+            wmiParams["DesktopInteract"] = true;
+            ManagementBaseObject wmiInvoke = wmi.InvokeMethod("Change", wmiParams, null);*/
         }
     }
 }

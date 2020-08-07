@@ -47,35 +47,13 @@ namespace Server
         protected override void OnStop()
         {
             timer.Stop();
-            listener.Stop();
         }
 
         protected void OnTimer(object sender, ElapsedEventArgs args)
         {
-            if (listener.client == null)
-            {
-                listener.BeginListening();
-            }
-            else if (listener.client != null)
-            {
-                Connection connection = new Connection(listener.client);
-                listener.client = null;
-
-                while (connection.client.Connected)
-                {
-                    SendMessage("READING");
-                    string info = connection.ReadInfo();
-                    
-                    if (!string.IsNullOrEmpty(info))
-                    {
-                        SendMessage("Info:" + info);
-                    }
-                    //Manipulate.DoAction(info.Trim());
-                    /*byte[] returnBytes = Encoding.ASCII.GetBytes(Manipulate.DoAction(info).ToString());
-                    connection.client.GetStream().Write(returnBytes, 0, returnBytes.Length);*/
-                    Thread.Sleep(100);
-                }
-            }
+            TcpClient client = listener.BeginListening();
+            Connection connection = new Connection(client);
+            connection.ReadInfo();
         }
 
         public void SendMessage(string mes)

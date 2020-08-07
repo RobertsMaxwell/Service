@@ -11,10 +11,9 @@ namespace Server
     class Listener
     {
         public int port;
-        public TcpClient client;
         public TcpListener listener;
 
-        public bool searching = true;
+        public bool searching = false;
 
         public Listener(int port)
         {
@@ -22,23 +21,14 @@ namespace Server
             listener = new TcpListener(port);
         }
 
-        public void BeginListening()
+        public TcpClient BeginListening()
         {
             listener.Start();
-            searching = true;
-            while (searching)
-            {
-                Thread.Sleep(10);
-                client = listener.AcceptTcpClient();
-                ServerMain.service.SendMessage("Connected!");
-                return;
-            }
-        }
 
-        public void Stop()
-        {
-            searching = false;
-            client = null;
+            TcpClient client = listener.AcceptTcpClient();
+
+            ServerMain.service.SendMessage("Connected!");
+            return client;
         }
     }
 }

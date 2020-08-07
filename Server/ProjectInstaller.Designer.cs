@@ -43,6 +43,7 @@
             this.serviceInstaller1.DisplayName = "Service Server";
             this.serviceInstaller1.ServiceName = "TestService";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
+            this.serviceInstaller1.Committed += new System.Configuration.Install.InstallEventHandler(this.serviceInstaller1_Committed);
             // 
             // ProjectInstaller
             // 
