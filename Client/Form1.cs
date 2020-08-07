@@ -20,6 +20,8 @@ namespace Client
     public partial class Form1 : Form
     {
 
+        public static string serviceIP;
+
         public Form1()
         {
             InitializeComponent();
@@ -35,6 +37,7 @@ namespace Client
         {
             if(targetIP.Text == "")
             {
+                MessageBox.Show("Please enter in a IP");
                 return;
             }
 
@@ -57,7 +60,13 @@ namespace Client
 
             Console.WriteLine("Establishing Connection to {0}:1738", targetIP.Text);
 
-            IPAddress ServiceIP = IPAddress.Parse(targetIP.Text);
+            if(messageBox.Text == "")
+            {
+                MessageBox.Show("Please enter in a message");
+                return;
+            }
+
+            IPAddress ServiceIP = IPAddress.Parse(serviceIP);
             try
             {
                 
@@ -86,6 +95,20 @@ namespace Client
         {
             Form2 form2 = new Form2();
             form2.ShowDialog();
+        }
+
+        private void IPButton_Click(object sender, EventArgs e)
+        {
+            if (ipButton.Text == "Set IP")
+            {
+                ipButton.Text = "Change IP";
+            }
+            else if(ipButton.Text == "Change IP")
+            {
+                ipButton.Text = "Set IP";
+            }
+            serviceIP = targetIP.Text;
+            targetIP.ReadOnly = !targetIP.ReadOnly;
         }
     }
 }

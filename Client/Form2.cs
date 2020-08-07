@@ -45,7 +45,7 @@ namespace Client
         {
             TcpClient client = new TcpClient();
 
-            IPAddress ServiceIP = IPAddress.Parse(targetIP.Text);
+            IPAddress ServiceIP = IPAddress.Parse(Form1.serviceIP);
             try
             {
                 Console.WriteLine("Connecting...");

@@ -31,8 +31,6 @@
             this.browseButton = new System.Windows.Forms.Button();
             this.filePath = new System.Windows.Forms.TextBox();
             this.setButton = new System.Windows.Forms.Button();
-            this.targetIP = new System.Windows.Forms.TextBox();
-            this.labelIP = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -55,30 +53,13 @@
             // 
             // setButton
             // 
-            this.setButton.Location = new System.Drawing.Point(137, 119);
+            this.setButton.Location = new System.Drawing.Point(139, 84);
             this.setButton.Name = "setButton";
             this.setButton.Size = new System.Drawing.Size(115, 29);
             this.setButton.TabIndex = 2;
             this.setButton.Text = "Set Background";
             this.setButton.UseVisualStyleBackColor = true;
             this.setButton.Click += new System.EventHandler(this.setButton_Click);
-            // 
-            // targetIP
-            // 
-            this.targetIP.Location = new System.Drawing.Point(55, 72);
-            this.targetIP.Name = "targetIP";
-            this.targetIP.Size = new System.Drawing.Size(261, 20);
-            this.targetIP.TabIndex = 3;
-            // 
-            // labelIP
-            // 
-            this.labelIP.AutoSize = true;
-            this.labelIP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelIP.Location = new System.Drawing.Point(29, 73);
-            this.labelIP.Name = "labelIP";
-            this.labelIP.Size = new System.Drawing.Size(20, 16);
-            this.labelIP.TabIndex = 4;
-            this.labelIP.Text = "IP";
             // 
             // label1
             // 
@@ -94,15 +75,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(416, 165);
+            this.ClientSize = new System.Drawing.Size(416, 134);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.labelIP);
-            this.Controls.Add(this.targetIP);
             this.Controls.Add(this.setButton);
             this.Controls.Add(this.filePath);
             this.Controls.Add(this.browseButton);
             this.Name = "Form2";
-            this.Text = "Form2";
+            this.Text = "Background";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -113,8 +92,6 @@
         private System.Windows.Forms.Button browseButton;
         private System.Windows.Forms.TextBox filePath;
         private System.Windows.Forms.Button setButton;
-        private System.Windows.Forms.TextBox targetIP;
-        private System.Windows.Forms.Label labelIP;
         private System.Windows.Forms.Label label1;
     }
 }
