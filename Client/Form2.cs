@@ -66,7 +66,7 @@ namespace Client
                         byte[] image = ImageToByteArray(backgroundImg);
                         byte[] combined = action.Concat(image).ToArray();
 
-                        bf.Serialize(ns, action);
+                        bf.Serialize(ns, combined);
 
                         client.Close();
                     }
