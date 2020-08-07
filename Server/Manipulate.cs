@@ -8,8 +8,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing;
+using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.Windows;
+using System.Windows.Forms;
+using System.Threading;
 
 namespace Server
 {
@@ -20,6 +23,13 @@ namespace Server
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         static extern bool SystemParametersInfo(int uiAction, int uiParam, string pvParam, int fWinIni);
+
+        [DllImport("User32")]
+        public static extern int SetForegroundWindow(IntPtr hwnd);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
 
         public static int DoAction(string action)
         {
@@ -45,6 +55,15 @@ namespace Server
             {
                 ServerMain.service.SendMessage(e.Message);
             }
+        }
+
+        public static void OpenNotePad(string message)
+        {
+            Process.Start("notepad");
+            IntPtr notepad = FindWindow("notepad", null);
+            SetForegroundWindow(notepad);
+            Thread.Sleep(100);
+            SendKeys.SendWait("Test");
         }
     }
 }

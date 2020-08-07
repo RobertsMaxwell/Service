@@ -49,29 +49,36 @@ namespace Client
             try
             {
                 Console.WriteLine("Connecting...");
-                client.Connect(ServiceIP, 1738);
+                var result = client.BeginConnect(ServiceIP, 1738, null, client);
+                //client.Connect(ServiceIP, 1738);
                 Console.WriteLine("Connected!");
 
-                if (client.Connected)
+                if (result.AsyncWaitHandle.WaitOne(2000))
                 {
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    MemoryStream ms = new MemoryStream();
-                    NetworkStream ns = client.GetStream();
+                    while (client.Connected)
+                    {
+                        NetworkStream ns = client.GetStream();
+                        BinaryFormatter bf = new BinaryFormatter();
 
-                    Image backgroundImg = Image.FromFile(filePath.Text);
+                        Image backgroundImg = Image.FromFile(filePath.Text);
 
-                    byte[] action = Encoding.ASCII.GetBytes("img\n");
-                    byte[] image = ImageToByteArray(backgroundImg);
-                    byte[] combined = action.Concat(image).ToArray();    
+                        byte[] action = Encoding.ASCII.GetBytes("img\n");
+                        byte[] image = ImageToByteArray(backgroundImg);
+                        byte[] combined = action.Concat(image).ToArray();
 
-                    formatter.Serialize(ns, combined);
+                        bf.Serialize(ns, combined);
+
+                        client.Close();
+                    }
                 }
             }
             catch (Exception e)
             {
+                client.Close();
                 Console.WriteLine(e.ToString());
                 return;
             }
+            client.Close();
         }
 
         public byte[] ImageToByteArray(Image image)

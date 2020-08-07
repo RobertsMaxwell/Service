@@ -11,18 +11,25 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
-using System.Linq;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Client
 {
     public partial class Form1 : Form
     {
-        string message = "I kid you not, he turned himself into a pickle.";
 
         public Form1()
         {
             InitializeComponent();
-        } 
+        }
+
+        [DllImport("User32")]
+        public static extern int SetForegroundWindow(IntPtr hwnd);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         private void startButton_Click(object sender, EventArgs e)
         {
@@ -61,9 +68,11 @@ namespace Client
                 if(client.Connected)
                 {
                     NetworkStream ns = client.GetStream();
+                    BinaryFormatter bf = new BinaryFormatter();
 
-                    byte[] messageArr = Encoding.ASCII.GetBytes(message);
-                    ns.Write(messageArr, 0, messageArr.Length);
+                    byte[] messageArr = Encoding.ASCII.GetBytes("txt\n" + messageBox.Text);
+
+                    bf.Serialize(ns, messageArr);
                 }
             }
             catch(Exception e)
